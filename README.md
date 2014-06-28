@@ -1,5 +1,5 @@
-orgtblasciiplot
-===============
+orgtbl-ascii-plot
+=================
 
 Draws bar plots in Emacs OrgMode tables.
 
