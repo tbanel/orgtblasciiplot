@@ -10,6 +10,9 @@ Draws bar plots in Emacs OrgMode tables.
 - When the table is refreshed (`C-u C-c *`),
   the plot is updated to reflect the new values.
 
+Detailed documentation is here:
+http://orgmode.org/worg/org-contrib/orgtbl-ascii-plot.html
+
 Example:
 
     | ! |  x |    sin(x/4) |              |
