@@ -1,9 +1,11 @@
-;;; orgtbl-ascii-plot.el --- Draws bar plots in org-mode tables
+;;; orgtbl-ascii-plot.el --- ascii-art bar plots in org-mode tables
 
 ;; Copyright (C) 2013-2014  Thierry Banel
 
 ;; Author: Thierry Banel  tbanelwebmin at free dot fr
-;; Keywords: ascii plot
+;;         Michael Brand
+;; Version: 1.0
+;; Keywords: org, table, ascii, plot
 
 ;; orgtbl-ascii-plot is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -16,7 +18,7 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with GNU Emacs.  If not, see <http://www.gnu.org/licenses/>.
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
@@ -67,6 +69,9 @@
 ;; | # | 31 | -0.78861628 | W-           |
 ;; #+TBLFM: $3=sin($x/3);R::$4='(orgtbl-ascii-draw $3 -1 1)
 
+;;; Requires:
+(require 'org)
+
 ;;; Code:
 
 (defun orgtbl-ascii-draw (value min max &optional width characters)
@@ -94,6 +99,7 @@
        (string (elt characters
 		    (floor (* (- value (floor value)) len)))))))))
   
+;;;###autoload
 (defun orgtbl-ascii-plot (&optional ask)
   "Draws an ascii bars plot in a column, out of values found in another column.
   A numeric prefix may be given to override the default 12 characters wide plot.
@@ -172,4 +178,5 @@
     "
   (orgtbl-ascii-draw value min max width " \u258F\u258E\u258D\u258C\u258B\u258A\u2589\u2588"))
 
+(provide 'orgtbl-ascii-plot)
 ;;; orgtbl-ascii-plot.el ends here
