@@ -71,6 +71,7 @@
 
 ;;; Requires:
 (require 'org)
+(require 'org-table)
 
 ;;; Code:
 
