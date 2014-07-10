@@ -4,7 +4,7 @@
 
 ;; Author: Thierry Banel  tbanelwebmin at free dot fr
 ;;         Michael Brand
-;; Version: 1.0
+;; Version: 1.1
 ;; Package-Requires: ((org "7"))
 ;; Keywords: org, table, ascii, plot
 
@@ -141,7 +141,12 @@
       (org-table-get-stored-formulas)))
     (org-table-recalculate t)))
   
-(org-defkey org-mode-map "\C-cp" 'orgtbl-ascii-plot)
+;;;###autoload
+(setq org-load-hook
+      (cons (lambda ()
+	      (org-defkey org-mode-map "\C-cp" 'ap))
+	    (if (boundp 'org-load-hook)
+		org-load-hook)))
 
 ;; Example of extension: unicode characters
 ;; Here are two examples of different styles.

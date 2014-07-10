@@ -51,3 +51,7 @@ Example:
     | # | 31 | -0.78861628 | W-           |
     #+TBLFM: $3=sin($x/3);R::$4='(orgtbl-ascii-draw $3 -1 1)
 
+Change Log
+==========
+
+Make C-c p key-binding autoloaded
