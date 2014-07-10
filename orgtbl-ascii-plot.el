@@ -144,7 +144,7 @@
 ;;;###autoload
 (setq org-load-hook
       (cons (lambda ()
-	      (org-defkey org-mode-map "\C-cp" 'ap))
+	      (org-defkey org-mode-map "\C-cp" 'orgtbl-ascii-plot))
 	    (if (boundp 'org-load-hook)
 		org-load-hook)))
 
