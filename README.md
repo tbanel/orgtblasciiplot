@@ -9,7 +9,7 @@ Draws bar plots in Emacs OrgMode tables.
   or use the menu entry `Tbl > Column > Ascii plot`
   a new column is added with a bar plot.
 - When the table is refreshed
-  (`C-u C-c *` or menu `Tbl > Calculate > Recalculate all),
+  (`C-u C-c *` or menu `Tbl > Calculate > Recalculate all`),
   the plot is updated to reflect the new values.
 
 Detailed documentation is here:
@@ -56,6 +56,6 @@ Example:
 Change Log
 ==========
 
-Make `C-c p` key-binding autoloaded
-Added menu entry `Tbl > Column > Ascii plot`
+- Make `C-c p` key-binding autoloaded
+- Added menu entry `Tbl > Column > Ascii plot`
 
