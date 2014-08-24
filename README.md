@@ -56,4 +56,6 @@ Example:
 Change Log
 ==========
 
-Make C-c p key-binding autoloaded
+Make `C-c p` key-binding autoloaded
+Added menu entry `Tbl > Column > Ascii plot`
+
