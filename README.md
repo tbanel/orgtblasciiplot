@@ -6,8 +6,10 @@ Draws bar plots in Emacs OrgMode tables.
 - Put the cursor in a column containing numerical values
   of an Org-Mode table,
 - type `C-c p`,
+  or use the menu entry `Tbl > Column > Ascii plot`
   a new column is added with a bar plot.
-- When the table is refreshed (`C-u C-c *`),
+- When the table is refreshed
+  (`C-u C-c *` or menu `Tbl > Calculate > Recalculate all),
   the plot is updated to reflect the new values.
 
 Detailed documentation is here:

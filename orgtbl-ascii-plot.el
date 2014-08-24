@@ -73,6 +73,7 @@
 ;;; Requires:
 (require 'org)
 (require 'org-table)
+(require 'easymenu)
 
 ;;; Code:
 
@@ -140,13 +141,20 @@
 	       "orgtbl-ascii-draw" col min max length))
       (org-table-get-stored-formulas)))
     (org-table-recalculate t)))
-  
+
+(defun orgtbl-ascii-plot-bindings ()
+  (org-defkey org-mode-map "\C-cp" 'orgtbl-ascii-plot)
+  (easy-menu-add-item
+   org-tbl-menu '("Column")
+   ["Ascii plot" orgtbl-ascii-plot t]))
+
 ;;;###autoload
-(setq org-load-hook
-      (cons (lambda ()
-	      (org-defkey org-mode-map "\C-cp" 'orgtbl-ascii-plot))
-	    (if (boundp 'org-load-hook)
-		org-load-hook)))
+(if (functionp 'org-defkey)
+    (orgtbl-ascii-plot-bindings) ;; org-mode already loaded
+  (setq org-load-hook            ;; org-mode will be loaded later
+	(cons 'orgtbl-ascii-plot-bindings
+	      (if (boundp 'org-load-hook)
+		  org-load-hook))))
 
 ;; Example of extension: unicode characters
 ;; Here are two examples of different styles.
