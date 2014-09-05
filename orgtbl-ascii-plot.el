@@ -142,6 +142,7 @@
       (org-table-get-stored-formulas)))
     (org-table-recalculate t)))
 
+;;;###autoload
 (defun orgtbl-ascii-plot-bindings ()
   (org-defkey org-mode-map "\C-cp" 'orgtbl-ascii-plot)
   (easy-menu-add-item
