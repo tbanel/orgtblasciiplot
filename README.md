@@ -1,11 +1,22 @@
 orgtbl-ascii-plot
 =================
 
+News
+----
+
+- This package will be integrated in the next release of Org mode.
+  It will no longer need to be a Melpa package.
+- Key-binding will change from current `C-c p' to `C-c " a'.
+  This is reflected in this package.
+- A new key-binding will be available:
+  `C-c " g' will launch GnuPlot on a table.
+  The key-binding is made available by this package.
+
 Draws bar plots in Emacs OrgMode tables.
 
 - Put the cursor in a column containing numerical values
   of an Org-Mode table,
-- type `C-c p`,
+- type `C-c " a`,
   or use the menu entry `Tbl > Column > Ascii plot`
   a new column is added with a bar plot.
 - When the table is refreshed

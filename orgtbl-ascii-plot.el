@@ -144,7 +144,8 @@
 
 ;;;###autoload
 (defun orgtbl-ascii-plot-bindings ()
-  (org-defkey org-mode-map "\C-cp" 'orgtbl-ascii-plot)
+  (org-defkey org-mode-map "\C-c\"a"  'orgtbl-ascii-plot)
+  (org-defkey org-mode-map "\C-c\"g"  'org-plot/gnuplot)
   (easy-menu-add-item
    org-tbl-menu '("Column")
    ["Ascii plot" orgtbl-ascii-plot t]))
