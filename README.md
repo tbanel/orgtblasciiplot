@@ -6,11 +6,14 @@ News
 
 - This package will be integrated in the next release of Org mode.
   It will no longer need to be a Melpa package.
-- Key-binding will change from current `C-c p' to `C-c " a'.
+- Key-binding will change from current `C-c p` to `C-c " a`.
   This is reflected in this package.
 - A new key-binding will be available:
-  `C-c " g' will launch GnuPlot on a table.
+  `C-c " g` will launch GnuPlot on a table.
   The key-binding is made available by this package.
+
+Bar plot
+--------
 
 Draws bar plots in Emacs OrgMode tables.
 
@@ -26,7 +29,8 @@ Draws bar plots in Emacs OrgMode tables.
 Detailed documentation is here:
 http://orgmode.org/worg/org-contrib/orgtbl-ascii-plot.html
 
-Example:
+Example
+-------
 
     | ! |  x |    sin(x/4) |              |
     |---+----+-------------+--------------|
@@ -65,8 +69,8 @@ Example:
     #+TBLFM: $3=sin($x/3);R::$4='(orgtbl-ascii-draw $3 -1 1)
 
 Change Log
-==========
+----------
 
 - Make `C-c p` key-binding autoloaded
 - Added menu entry `Tbl > Column > Ascii plot`
-
+- Change key-binding from `C-c p` to `C-c " a`
