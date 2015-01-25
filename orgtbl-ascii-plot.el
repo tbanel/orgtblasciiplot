@@ -5,7 +5,6 @@
 ;; Author: Thierry Banel  tbanelwebmin at free dot fr
 ;;         Michael Brand
 ;; Version: 1.1
-;; Package-Requires: ((org "7"))
 ;; Keywords: org, table, ascii, plot
 
 ;; orgtbl-ascii-plot is free software: you can redistribute it and/or modify
