@@ -4,13 +4,10 @@ orgtbl-ascii-plot
 News
 ----
 
-- This package will be integrated in the next release of Org mode.
-  It will no longer need to be a Melpa package.
-- Key-binding will change from current `C-c p` to `C-c " a`.
+- This package is now part of Org Mode.
+  It is no longer needed as a separate Melpa package.
+- Standard key-binding is now `C-c " a`.
   This is reflected in this package.
-- A new key-binding will be available:
-  `C-c " g` will launch GnuPlot on a table.
-  The key-binding is made available by this package.
 
 Bar plot
 --------
@@ -70,7 +67,7 @@ Example
 
 License
 -------
-Copyright (C) 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020  Thierry Banel
+Copyright (C) 2013-2023  Thierry Banel
 
 orgtblasciiplot is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -96,3 +93,4 @@ Change Log
 - Make `C-c p` key-binding autoloaded
 - Added menu entry `Tbl > Column > Ascii plot`
 - Change key-binding from `C-c p` to `C-c " a`
+- This software is now part of Org Mode

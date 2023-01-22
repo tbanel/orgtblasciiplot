@@ -1,6 +1,6 @@
 ;;; orgtbl-ascii-plot.el --- ascii-art bar plots in org-mode tables
 
-;; Copyright (C) 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020  Thierry Banel
+;; Copyright (C) 2013-2023  Thierry Banel
 
 ;; Author: Thierry Banel  tbanelwebmin at free dot fr
 ;;         Michael Brand
@@ -21,13 +21,20 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
+;; Notice! ----------------------------------
+;; This package is now part of Org Mode.
+;; It is no longer needed as a separate Melpa package.
+;;
+;; Standard key-binding is now `C-c " a`.
+;; -------------------------------------------
+;;
+;;
 ;; Detailed documentation is here:
 ;; http://orgmode.org/worg/org-contrib/orgtbl-ascii-plot.html
 
 ;; Put the cursor in a column containing numerical values
 ;; of an Org-Mode table,
-;; type C-c p
+;; type C-c " a
 ;; A new column is added with a bar plot.
 ;; When the table is refreshed (C-u C-c *),
 ;; the plot is updated to reflect the new values.
