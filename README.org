@@ -1,0 +1,538 @@
+# -*- mode: org; coding:utf-8; -*-
+#+TITLE: Org Mode bar plots using UNICODE characters
+
+* New
+
+Orgtbl Ascii Plot rebooted and re-styled!
+
+Once an independent package, Orgtbl Ascii Plot was incorporated into
+Emacs Org Mode long ago. This revisited release brings instantaneous
+Unicode box‑drawing bar-plots right into Org Mode tables.
+
+The new release keeps the original simple design:
+- zero dependencies on external packages,
+- no PNG, GIF, SVG, PDF, or any image format, just pure text,
+- no setup (see [[#key-binding-c-c--a-and-menu-entries][Key binding C-c " a and menu entries]]),
+- drop-in replacement which preserves the legacy bar-plots (see
+  [[#wizard][Wizard]]).
+
+The new bar-plots make sense of your data (see [[#gallery][Gallery]]):
+- Unicode characters instead of ASCII ones render a polished aspect,
+- vertical grid lines enhance readability,
+- non-numeric cells are handled seamlessly, so mixed data-sets won't
+  break your plots (see [[#robustness][Robustness]]),
+- much care has been taken on fine details.
+
+* Table of Contents
+:PROPERTIES:
+:TOC:      :include siblings :depth 2 :force () :ignore (this) :local (nothing)
+:CUSTOM_ID: table-of-contents
+:END:
+
+:CONTENTS:
+- [[#gallery][Gallery]]
+- [[#first-example][First example]]
+- [[#how-does-that-work][How does that work?]]
+- [[#another-example][Another example]]
+- [[#wizard][Wizard]]
+- [[#key-binding-c-c--a-and-menu-entries][Key binding C-c " a and menu entries]]
+- [[#asking-for-minimum-and-maximum][Asking for minimum and maximum]]
+- [[#refreshing][Refreshing]]
+- [[#unicode-constraint][Unicode constraint]]
+- [[#fonts][Fonts]]
+- [[#robustness][Robustness]]
+- [[#installation][Installation]]
+- [[#authors-contributors][Authors, contributors]]
+- [[#changes][Changes]]
+- [[#gpl-3-license][GPL 3 License]]
+:END:
+
+* Gallery
+:PROPERTIES:
+:CUSTOM_ID: gallery
+:END:
+
+Textual bar-plots right inside an Org Mode table:
+
+[[file:images/gallery_a.png]]
+
+#+begin_example
+
+Unicode with vertical lines at x=25, x=50, x=75╶─╮
+Unicode with one vertical line at x=50╶─╮  ╭─────╯
+legacy ASCII Org Mode plotter╶─╮        │  │
+data to plot╶─╮      ╭─────────╯        │  │
+   ╭──────────╯      │      ╭───────────╯  │
+   │          ╭──────╯      │              │
+ ┏━▼━┓ ┏━━━━━━▼━━━━━┓ ┏━━━━━▼━━━━━━┓ ┏━━━━━▼━━━━━━┓
+ ╹   ╹ ╹            ╹ ╹            ╹ ╹            ╹
+|-----+--------------+--------------+--------------|
+|  16 | WH           | █▉    ▏      | █▉ ▏  ▏  ▏   |
+|   9 | W.           | █     ▏      | █  ▏  ▏  ▏   |
+|   4 | !            | ▍     ▏      | ▍  ▏  ▏  ▏   |
+|   1 | .            | ◦     ▏      | ◦  ▏  ▏  ▏   |
+|   0 |              | ◦     ▏      | ◦  ▏  ▏  ▏   |
+|   1 | .            | ◦     ▏      | ◦  ▏  ▏  ▏   |
+|   4 | !            | ▍     ▏      | ▍  ▏  ▏  ▏   |
+|   9 | W.           | █     ▏      | █  ▏  ▏  ▏   |
+|  16 | WH           | █▉    ▏      | █▉ ▏  ▏  ▏   |
+|  25 | WWW          | ███   ▏      | ██▉▏  ▏  ▏   |
+|  36 | WWWW;        | ████▎ ▏      | ██▉█▎ ▏  ▏   |
+|  49 | WWWWWH       | █████▉▏      | ██▉██▉▏  ▏   |
+|  64 | WWWWWWWh     | █████▉█▋     | ██▉██▉█▋ ▏   |
+|  81 | WWWWWWWWWh   | █████▉███▋   | ██▉██▉██▉▋   |
+| 100 | WWWWWWWWWWWW | █████▉██████ | ██▉██▉██▉███ |
+#+TBLFM: $1=(@#-5)^2::$4='(orgtbl-ascii-plot-with-vert $1 0.0 100.0 12  3 6 9)::$3='(orgtbl-ascii-plot-with-vert $1 0.0 100.0 12 6)::$2='(orgtbl-ascii-draw $1 0.0 100.0 12)
+                       ▲  ┗━━━━━━━━━━━━━━━━━━━━━━━━▲━━━━━━━━━━━━━━━━━━━━━━━━━┛
+fourth column╶─────────╯                           │
+is a usual Org Mode spreadsheet formula╶───────────╯
+
+#+end_example
+
+Several distinct plots in the same table:
+
+[[file:images/gallery_b.png]]
+
+#+begin_example
+
+Plot wind
+with vertical lines every 10 km/h╶────────────────╮
+                                                  │
+Plot temperature                                  │
+with a grid line at 20°C╶────╮                    │
+                             │                    │
+                      ┏━━━━━━▼━━━━━┓        ┏━━━━━▼━━━━┓
+| Day       | Temp°C |╹            ╹| Wind |╹          ╹|
+|-----------+--------+--------------+------+------------|
+| Monday    |     15 | ██████   ▏   |    5 | █▌ ▏  ▏  ▏ |
+| Tuesday   |     18 | ███████▊ ▏   |    3 | ▉  ▏  ▏  ▏ |
+| Wednesday |     23 | ████████▉█▊  |   10 | ██▉▏  ▏  ▏ |
+| Thursday  |     20 | ████████▉▏   |   12 | ██▉▌  ▏  ▏ |
+| Friday    |     24 | ████████▉██▍ |   25 | ██▉██▉█▌ ▏ |
+| Saturday  |     11 | ███▌     ▏   |   15 | ██▉█▌ ▏  ▏ |
+| Sunday    |     12 | ████▏    ▏   |    7 | ██ ▏  ▏  ▏ |
+#+TBLFM: $3='(orgtbl-ascii-plot-with-vert $2 5.0 25.0 12 9)::$5='(orgtbl-ascii-plot-with-vert $4 0.0 40.0 12  3 6 9)
+                                           ▲ ┗━━▲━━━┛  ▲ ▲
+plot data in column n°2╶───────────────────╯    │      │ │
+plot values from 5 to 25╶───────────────────────╯      │ │
+over 12 characters wide╶───────────────────────────────╯ │
+with a grid line at t°=20 which falls on character 9╶────╯
+
+#+end_example
+
+* First example
+:PROPERTIES:
+:CUSTOM_ID: first-example
+:END:
+We have a column with numerical values:
+#+begin_example
+|  1.74 |
+|  5.54 |
+|  5.50 |
+|  4.57 |
+|  7.18 |
+|  6.51 |
+|  7.39 |
+|  9.57 |
+| 12.58 |
+| 13.57 |
+| 13.79 |
+| 12.10 |
+| 15.72 |
+| 17.26 |
+#+end_example
+
+Orgtbl Ascii Plot adds a column to visualize it:
+
+[[file:images/example_a.png]]
+
+#+begin_example
+|  1.74 | █▏    ▏      |
+|  5.54 | ███▋  ▏      |
+|  5.50 | ███▋  ▏      |
+|  4.57 | ███   ▏      |
+|  7.18 | ████▊ ▏      |
+|  6.51 | ████▎ ▏      |
+|  7.39 | ████▉ ▏      |
+|  9.57 | █████▉▍      |
+| 12.58 | █████▉██▍    |
+| 13.57 | █████▉███    |
+| 13.79 | █████▉███▏   |
+| 12.10 | █████▉██     |
+| 15.72 | █████▉████▍  |
+| 17.26 | █████▉█████▌ |
+#+TBLFM: $2='(orgtbl-ascii-plot-with-vert $1 0 18 12  6)
+#+end_example
+
+It is a bar-plot drawn with the so called "block characters" of the
+UNICODE standard. There is a vertical line at =x=10= to help make
+sense of the data.
+
+To get this result, just do that:
+- put the cursor in the data column,
+- type =C-c " a=,
+- answer =1-vertical= for the style of plot (completion available,
+  just type =1 TAB RET=),
+- accept the suggested 12 characters width, minimum, and maximum by
+  hitting =RET= three times,
+- define the vertical grid line to be at the =x=10= coordinate.
+
+This took about 15 seconds.
+
+* How does that work?
+:PROPERTIES:
+:CUSTOM_ID: how-does-that-work
+:END:
+It works by adding a new column with a spreadsheet formula:
+
+[[file:images/how_works.png]]
+
+#+begin_example
+$2='(orgtbl-ascii-plot-with-vert $1 0 18 12  6)
+                             ▲    ▲ ┗━▲┛  ▲  ▲
+plot column n° 1─────────────├────╯   │   │  │
+                             │        │   │  │
+extend the plot from x= 0╶───├────────╯   │  │
+               up to x=18╶───├────────╯   │  │
+                             │            │  │
+make the plot this wide╶─────├────────────╯  │
+                             │               │
+please add a vertical line╶──╯               │
+at the 6th character corresponding to x=10╶──╯
+
+#+end_example
+
+A wizard is available to insert this spreadsheet formula. Invoke it
+with =C-c " a=, while the cursor is inside the column to plot.
+
+* Another example
+:PROPERTIES:
+:CUSTOM_ID: another-example
+:END:
+
+[[file:images/example_b.png]]
+
+#+begin_example
+|  1.74 | █  ▏  ▏  ▏  |
+|  5.54 | ██▉▎  ▏  ▏  |
+|  5.50 | ██▉▎  ▏  ▏  |
+|  4.57 | ██▋▏  ▏  ▏  |
+|  7.18 | ██▉█▎ ▏  ▏  |
+|  6.51 | ██▉▉  ▏  ▏  |
+|  7.39 | ██▉█▍ ▏  ▏  |
+|  9.57 | ██▉██▋▏  ▏  |
+| 12.58 | ██▉██▉█▌ ▏  |
+| 13.57 | ██▉██▉██▏▏  |
+| 13.79 | ██▉██▉██▎▏  |
+| 12.10 | ██▉██▉█▎ ▏  |
+| 15.72 | ██▉██▉██▉▍  |
+| 17.26 | ██▉██▉██▉█▎ |
+,#+TBLFM: $2='(orgtbl-ascii-plot-with-vert $1 0.0 20.0 12  3 6 9)
+#+end_example
+
+Here we requested vertical lines 5 units apart from each other (the
+first one being at the far left side of the plot).
+
+We requested the plot to map values in the range =[0…17.26]= and
+stretch over =12= characters. Actually, the range was automatically
+adjusted to =[0…20]= so that the vertical lines fall at the beginning of
+characters: =y=0=, =y=3=, =y=6=, =y=9=.
+
+Basically, the process is as follows:
+- put the cursor in the data column,
+- type =C-c " a=,
+- answer =many-verticals= for the style of plot (completion
+  available, just type =m TAB RET=),
+- accept the suggested 12 characters width, minimum, and maximum by
+  hitting =RET= three times,
+- define the vertical grid lines to be =5= unit apart from each other.
+
+* Wizard
+:PROPERTIES:
+:CUSTOM_ID: wizard
+:END:
+
+Writing down the correct Org Table spreadsheet formula is far from
+obvious. Therefore a wizard is available.
+
+Actually, there are 6 sub-wizards for 6 plotting styles, launched by
+the top-level wizard.
+
+- =0-vertical-ascii-legacy=
+- =0-vertical-unicode-cont-legacy=
+- =0-vertical-unicode-grid-legacy=
+- =1-vertical=
+- =2-verticals=
+- =many-verticals=
+
+The first one, =0-vertical-ascii-legacy= is the legacy plotter. It uses
+only usual ASCII characters. Therefore it is guarantied to work
+anywhere where a mono-spaced font is available.
+
+The 2nd and 3th, =0-vertical-unicode-xxxx-legacy=, are also legacy
+plotters. They were not accessible through a key binding or a
+menu. Now they are. They make use of UNICODE block characters, as the
+4th, 5th, and 6th. Therefore, they need a character font able to
+display them (see [[#fonts][Fonts]]), and the file must be encoded in a variant of
+UNICODE, for instance UTF-8 or UTF-16.
+
+The =1-vertical= style adds a vertical grid line at a specified
+coordinate. It may slightly increase the maximum so as the grid line
+is at the beginning of a character.
+
+The =2-verticals= style is like the =1-vertical= with 2 grid lines. It may
+adjust the specified minimum and maximum to get the 2 lines on the
+beginning of a character.
+
+The =many-verticals= style adds as may lines as needed so as there is a
+specified spacing between one line and the next. The left border of
+the plot is considered to be the first vertical grid line. The
+specified minimum and maximum may be adjusted so that the grid lines
+fall on the beginning of characters. It may also increase the
+specified width in characters.
+
+* Key binding =C-c " a= and menu entries
+:PROPERTIES:
+:CUSTOM_ID: key-binding-c-c--a-and-menu-entries
+:END:
+
+The wizard is bound to the following keyboard sequence: =C-c " a=. This
+happens to be the standard Org Mode key-binding. But no worries! The
+function that =C-c " a= used to call is still available unchanged. Just
+answer =0-vertical-ascii-legacy= (completion available) to the wizard
+when it asks for the style of plot.
+
+The top-level wizard and the 6 sub-wizard can also be launched from
+the menu. Follow:
+
+=Menu > Table > Plot=
+
+By the way, the legacy Unicode plots (=orgtbl-uc-draw-cont= and
+=orgtbl-uc-draw-grid=) are not directly available in Org Mode. With this
+package, they are. Just select =0-vertical-unicode-cont-legacy= or
+=0-vertical-unicode-grid-legacy= (completion available) when the wizard
+asks.
+
+3 new styles of plots are added by this package: 1, 2, and many
+vertical lines style plots. Each has its own sub-wizard.
+
+* Asking for minimum and maximum
+:PROPERTIES:
+:CUSTOM_ID: asking-for-minimum-and-maximum
+:END:
+
+All sub-wizards ask for the minimum and maximum values to plot. Just
+type =RET= for the default value. The defaults are the current minimum &
+maximum found in the table. If you intend to add rows to the table
+later on, you may want to enlarge the =[min..max]= interval
+beforehand. Thus the possibility to enter different values than the
+actual min & max.
+
+If a value to plot falls outside the chosen =[min..max]= interval, no
+worries. It will be plotted anyway with a visual hint that it is out
+of bounds. See [[#robustness][Robustness]].
+
+* Refreshing
+:PROPERTIES:
+:CUSTOM_ID: refreshing
+:END:
+
+In case the table evolves, there is no need to run again the
+wizard. Just type:
+
+=C-u C-c *=
+
+This will redraw the plots (as well as update all other spreadsheet
+formulas).
+
+To refresh a single row, type:
+
+=C-c *=
+
+If the table has changed too much, delete the column containing the
+plot with =M-S-<left>=, and re-create it.
+
+* Unicode constraint
+:PROPERTIES:
+:CUSTOM_ID: unicode-constraint
+:END:
+
+Unicode imposes a constraint: the vertical grid lines are only
+drawable on the left pixels of a Unicode character. (This constraint
+could be partially lifted with other Unicode characters, but they are
+not well supported by usual fonts).
+
+Therefore the wizards perform complex calculations to convert user
+specified coordinates (positions of vertical grid lines, and minimum
+and maximum values) into usable Unicode characters. This may involve
+lowering the minimum, growing the maximum, or even increasing the
+specified width in characters.
+
+Here is a summary of what each sub-wizard must do to comply with the
+Unicode constraints:
+
+| sub-wizard                     | minimum   | maximum   | width     |
+|--------------------------------+-----------+-----------+-----------|
+| 0-vertical-ascii-legacy        | untouched | untouched | untouched |
+| 0-vertical-unicode-cont-legacy | untouched | untouched | untouched |
+| 0-vertical-unicode-grid-legacy | untouched | untouched | untouched |
+| 1-vertical                     | untouched | INCREASE  | untouched |
+| 2-verticals                    | DECREASE  | INCREASE  | untouched |
+| many-verticals                 | DECREASE  | INCREASE  | INCREASE  |
+
+The other constraint, of course, is that the Org Mode file must be
+saved in a UNICODE encoding. For example, it may be UTF-8 or
+UTF-16. One among many ways to achieve that is to add the following
+line at the top of the Org Mode file:
+
+#+begin_example
+# -*- coding:utf-8; -*-
+#+end_example
+
+Or you may check what is the preferred character encoding by executing
+this command:
+
+#+begin_src elisp
+M-: (coding-system-priority-list t)
+#+end_src
+
+If the answer is =utf-8= or =utf-16= or another variant of =utf=, then
+chances are that your Org Mode file will be correctly encoded.
+
+* Fonts
+:PROPERTIES:
+:CUSTOM_ID: fonts
+:END:
+
+Not all fonts can display the needed Unicode characters:
+
+=▏▎▍▌▋▊▉█←→◦=
+
+You may want to use the following recommended fonts. They are
+mono-spaced, they support those Unicodes, and they are open-source.
+
+- DejaVu Sans Mono
+- Unifont
+- Hack
+- JetBrains Mono
+- Cascadia Mono
+- Agave
+- JuliaMono
+- FreeMono
+- Iosevka Comfy Fixed
+- Iosevka Comfy Wide Fixed
+- Aporetic Sans Mono
+- Aporetic Serif Mono
+- Source Code Pro
+
+You may define a font available throughout Emacs with:
+
+=M-x customize-face default=
+
+* Robustness
+:PROPERTIES:
+:CUSTOM_ID: robustness
+:END:
+Non-numeric and out-of-bound cells in your input data are handled
+nicely. They won't break the plot.
+
+- Non-numeric cells are just copied in the bar-plot, with vertical
+  grid lines overwritten.
+- Out-of-bound cells are those numeric values which fall outsided the
+  specified =[min..max]= interval. A visual arrow points in the
+  direction where the actual value lies. You may request a new plot
+  with an enlarged =[min..max]= interval.
+
+[[file:images/out_of_bounds.png]]
+
+#+begin_example
+   | alphabet | al▏h▏b▏t | non numeric cell |
+   |          | ◦ ▏ ▏ ▏  | empty cell       |
+   |      500 | █▉█▉█▉█→ | too large value  |
+   |     -500 | ← ▏ ▏ ▏  | too small value  |
+#+end_example
+
+* Installation
+:PROPERTIES:
+:CUSTOM_ID: installation
+:END:
+
+If you grap the package from Melpa, add the following lines to your
+=.emacs= file, and reload it.
+
+#+begin_src elisp
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+(package-initialize)
+#+end_src
+
+Alternately you may customize this variable:
+
+#+begin_example
+M-x customize-variable package-archives
+#+end_example
+
+Then browse the list of available packages and install =orgtbl-ascii-plot=
+#+begin_example
+M-x list-packages
+#+end_example
+
+Then (lazy) load the package. The most straightforward way is the
+widely accepted =use-package= facility. Put that in your =.emacs=
+file:
+
+#+begin_src elisp
+(use-package orgtbl-ascii-plot
+  ;; load the package only after Org Mode table has been loaded
+  :after (org-table)
+  ;; do not load the package until it is used
+  :defer t
+  ;; redefine the [C-c " a] key binding and add menu entries
+  :init (orgtbl-ascii-plot-bindings))
+#+end_src
+
+Alternately, you can download the Lisp file, and load it:
+
+#+begin_src elisp
+(load-file "orgtbl-ascii-plot.el")
+#+end_src
+
+* Authors, contributors
+:PROPERTIES:
+:CUSTOM_ID: authors-contributors
+:END:
+
+Author
+- Thierry Banel, tbanelwebmin at free dot fr
+
+* Changes
+:PROPERTIES:
+:CUSTOM_ID: changes
+:END:
+Top: earliest change. Bottom: latest change.
+
+- First version was ASCII. It was moved out of this package to the
+  core of Org Mode.
+- New 1, 2, many vertical lines plotting styles were added.
+- Wizard to switch between the 6 styles of plots.
+- Unit tests.
+- Readme changed from Markdown to Org Mode.
+- Info file added.
+
+* GPL 3 License
+:PROPERTIES:
+:CUSTOM_ID: gpl-3-license
+:END:
+Copyright (C) 2013-2026  Thierry Banel
+
+orgtbl-ascii-plot is free software: you can redistribute it and/or
+modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+orgtbl-aggregate is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.

@@ -1,0 +1,292 @@
+# -*- coding:utf-8; -*-
+#+TITLE: Unit Tests & Examples for Orgtbl ASCII Draw
+Copyright (C) 2013-2026  Thierry Banel
+
+org-aggregate is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+org-aggregate is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+* How to run?
+Running all tests should not change anything to this page.
+
+Run this script to complete all the unit tests in a disposable
+buffer. When done, the buffer and the original, untouched
+~unittests.org~, are compared, stopping at the first difference.
+
+#+begin_src elisp :results none
+(delete-other-windows)
+(goto-char (point-min))
+(org-cycle '(64))
+(split-window-right)
+
+;; Make a new buffer and fill it with the content of unittests.org
+
+(let ((f (buffer-file-name)))
+  (switch-to-buffer "disposable-unittest.org")
+  (erase-buffer)
+  (insert-file f))
+
+(org-mode)
+(org-cycle '(64))
+
+;; Clean & recompute all tests
+(org-table-map-tables
+ (lambda ()
+   (save-excursion
+     (search-forward "#+tblfm:")
+     (beginning-of-line)
+     (insert "a")
+     (previous-line)
+     (end-of-line)
+     (org-table-delete-column)
+     (forward-line)
+     (beginning-of-line)
+     (delete-forward-char 1)
+     (previous-line)
+     (org-table-recalculate t)
+     )))
+
+;; Compare the disposable buffer with the reference unittests.org
+(goto-char (point-min))
+(compare-windows nil)
+#+end_src
+
+* Sin one-vert
+
+| ! |  x | sin(x/7) |              |
+|---+----+----------+--------------|
+| # |  0 |        1 | █████▉▏      |
+| # |  1 | 1.142372 | █████▉▊      |
+| # |  2 | 1.281843 | █████▉█▋     |
+| # |  3 | 1.415572 | █████▉██▍    |
+| # |  4 | 1.540834 | █████▉███▏   |
+| # |  5 | 1.655078 | █████▉███▉   |
+| # |  6 | 1.755975 | █████▉████▌  |
+| # |  7 | 1.841471 | █████▉█████  |
+| # |  8 | 1.909823 | █████▉█████▍ |
+| # |  9 | 1.959639 | █████▉█████▊ |
+| # | 10 | 1.989903 | █████▉█████▉ |
+| # | 11 | 2.000000 | █████▉██████ |
+| # | 12 | 1.989723 | █████▉█████▉ |
+| # | 13 | 1.959282 | █████▉█████▊ |
+| # | 14 | 1.909297 | █████▉█████▍ |
+| # | 15 | 1.840787 | █████▉█████  |
+| # | 16 | 1.755147 | █████▉████▌  |
+| # | 17 | 1.654122 | █████▉███▉   |
+| # | 18 | 1.539770 | █████▉███▏   |
+| # | 19 | 1.414421 | █████▉██▍    |
+| # | 20 | 1.280629 | █████▉█▋     |
+| # | 21 | 1.141120 | █████▉▊      |
+| # | 22 | 0.998736 | █████▉▏      |
+| # | 23 | 0.856377 | █████▏▏      |
+| # | 24 | 0.716944 | ████▎ ▏      |
+| # | 25 | 0.583278 | ███▍  ▏      |
+| # | 26 | 0.458103 | ██▋   ▏      |
+| # | 27 | 0.343967 | ██    ▏      |
+| # | 28 | 0.243198 | █▍    ▏      |
+| # | 29 | 0.157846 | ▉     ▏      |
+| # | 30 | 0.089653 | ▌     ▏      |
+| # | 31 | 0.040007 | ▏     ▏      |
+| # | 32 | 0.009918 | ◦     ▏      |
+| # | 33 | 0.000002 | ◦     ▏      |
+| # | 34 | 0.010459 | ◦     ▏      |
+| # | 35 | 0.041076 | ▏     ▏      |
+| # | 36 | 0.091230 | ▌     ▏      |
+| # | 37 | 0.159898 | ▉     ▏      |
+| # | 38 | 0.245683 | █▍    ▏      |
+#+TBLFM: $3=sin($x/7)+1;Rf6::$4='(orgtbl-ascii-plot-with-vert $3 0.0 2.0 12 6)
+
+* Cos many-lines
+
+|         1 | █▉█▉█▉█▉█▉█▉█▉█→ |
+|  0.989813 | █▉█▉█▉█▉█▉█▉█▉█→ |
+|  0.959461 | █▉█▉█▉█▉█▉█▉█▉█→ |
+|  0.909560 | █▉█▉█▉█▉█▉█▉█▉█→ |
+|  0.841129 | █▉█▉█▉█▉█▉█▉█▉█→ |
+|  0.755561 | █▉█▉█▉█▉█▉█▉█▉█▌ |
+|  0.654600 | █▉█▉█▉█▉█▉█▉█▉▌  |
+|  0.540302 | █▉█▉█▉█▉█▉█▉█▍▏  |
+|  0.414997 | █▉█▉█▉█▉█▉█▉▏ ▏  |
+|  0.281236 | █▉█▉█▉█▉█▉▊ ▏ ▏  |
+|  0.141746 | █▉█▉█▉█▉█▍▏ ▏ ▏  |
+| -0.000632 | █▉█▉█▉█▉▏ ▏ ▏ ▏  |
+| -0.142998 | █▉█▉█▉▌ ▏ ▏ ▏ ▏  |
+| -0.282449 | █▉█▉█▏▏ ▏ ▏ ▏ ▏  |
+| -0.416147 | █▉█▊▏ ▏ ▏ ▏ ▏ ▏  |
+| -0.541366 | █▉▌ ▏ ▏ ▏ ▏ ▏ ▏  |
+| -0.655555 | █▍▏ ▏ ▏ ▏ ▏ ▏ ▏  |
+| -0.756389 | ▍ ▏ ▏ ▏ ▏ ▏ ▏ ▏  |
+| -0.841812 | ← ▏ ▏ ▏ ▏ ▏ ▏ ▏  |
+| -0.910085 | ← ▏ ▏ ▏ ▏ ▏ ▏ ▏  |
+| -0.959816 | ← ▏ ▏ ▏ ▏ ▏ ▏ ▏  |
+| -0.989992 | ← ▏ ▏ ▏ ▏ ▏ ▏ ▏  |
+| -0.999999 | ← ▏ ▏ ▏ ▏ ▏ ▏ ▏  |
+| -0.989632 | ← ▏ ▏ ▏ ▏ ▏ ▏ ▏  |
+| -0.959103 | ← ▏ ▏ ▏ ▏ ▏ ▏ ▏  |
+| -0.909034 | ← ▏ ▏ ▏ ▏ ▏ ▏ ▏  |
+| -0.840445 | ← ▏ ▏ ▏ ▏ ▏ ▏ ▏  |
+| -0.754732 | ▍ ▏ ▏ ▏ ▏ ▏ ▏ ▏  |
+| -0.653644 | █▍▏ ▏ ▏ ▏ ▏ ▏ ▏  |
+| -0.539238 | █▉▌ ▏ ▏ ▏ ▏ ▏ ▏  |
+| -0.413846 | █▉█▊▏ ▏ ▏ ▏ ▏ ▏  |
+| -0.280023 | █▉█▉█▏▏ ▏ ▏ ▏ ▏  |
+| -0.140494 | █▉█▉█▉▌ ▏ ▏ ▏ ▏  |
+|  0.001897 | █▉█▉█▉█▉▏ ▏ ▏ ▏  |
+|  0.144249 | █▉█▉█▉█▉█▍▏ ▏ ▏  |
+|  0.283662 | █▉█▉█▉█▉█▉▊ ▏ ▏  |
+|  0.417296 | █▉█▉█▉█▉█▉█▉▏ ▏  |
+|  0.542429 | █▉█▉█▉█▉█▉█▉█▍▏  |
+|  0.656510 | █▉█▉█▉█▉█▉█▉█▉▌  |
+|  0.757216 | █▉█▉█▉█▉█▉█▉█▉█▌ |
+|  0.842494 | █▉█▉█▉█▉█▉█▉█▉█→ |
+#+TBLFM: $1=cos((@#-1)/7);Rf6::$2='(orgtbl-ascii-plot-with-vert $1 -0.8 0.8 16  2 4 6 8 10 12 14)
+
+* ASCII kaj UNICODE
+
+|  9.93 | WV           |
+| 13.18 | WWW          |
+| 12.30 | WWh          |
+| 15.36 | WWWH         |
+|  5.13 |              |
+|  9.82 | WV           |
+| 16.49 | WWWW;        |
+| 15.34 | WWWH         |
+|  9.24 | Wl           |
+| 12.96 | WWW          |
+| 21.46 | WWWWWW:      |
+| 18.81 | WWWWW:       |
+| 16.41 | WWWW;        |
+| 20.86 | WWWWWW       |
+| 15.77 | WWWW         |
+| 22.91 | WWWWWWh      |
+| 28.67 | WWWWWWWWH    |
+| 22.64 | WWWWWWl      |
+| 20.14 | WWWWWh       |
+| 29.51 | WWWWWWWWW:   |
+| 26.17 | WWWWWWWW     |
+| 33.89 | WWWWWWWWWWH  |
+| 32.29 | WWWWWWWWWW;  |
+| 34.99 | WWWWWWWWWWW; |
+| 34.85 | WWWWWWWWWWW; |
+| 28.56 | WWWWWWWWH    |
+| 36.81 | WWWWWWWWWWWW |
+| 29.50 | WWWWWWWWW:   |
+| 34.32 | WWWWWWWWWWW. |
+| 32.94 | WWWWWWWWWW!  |
+| 32.79 | WWWWWWWWWW!  |
+#+TBLFM: $2='(orgtbl-ascii-draw $1 5.13 36.81 12)
+
+x#+TBLFM: $1=random(1200)/100+@#;%.2f
+
+|  9.93 | ██▉▏  ▏  ▏  |
+| 13.18 | ██▉▉  ▏  ▏  |
+| 12.30 | ██▉▋  ▏  ▏  |
+| 15.36 | ██▉█▌ ▏  ▏  |
+|  5.13 | █▌ ▏  ▏  ▏  |
+|  9.82 | ██▉▏  ▏  ▏  |
+| 16.49 | ██▉█▉ ▏  ▏  |
+| 15.34 | ██▉█▌ ▏  ▏  |
+|  9.24 | ██▊▏  ▏  ▏  |
+| 12.96 | ██▉▉  ▏  ▏  |
+| 21.46 | ██▉██▉▍  ▏  |
+| 18.81 | ██▉██▋▏  ▏  |
+| 16.41 | ██▉█▉ ▏  ▏  |
+| 20.86 | ██▉██▉▎  ▏  |
+| 15.77 | ██▉█▋ ▏  ▏  |
+| 22.91 | ██▉██▉▊  ▏  |
+| 28.67 | ██▉██▉██▌▏  |
+| 22.64 | ██▉██▉▊  ▏  |
+| 20.14 | ██▉██▉▏  ▏  |
+| 29.51 | ██▉██▉██▊▏  |
+| 26.17 | ██▉██▉█▊ ▏  |
+| 33.89 | ██▉██▉██▉█▏ |
+| 32.29 | ██▉██▉██▉▋  |
+| 34.99 | ██▉██▉██▉█▍ |
+| 34.85 | ██▉██▉██▉█▍ |
+| 28.56 | ██▉██▉██▌▏  |
+| 36.81 | ██▉██▉██▉██ |
+| 29.50 | ██▉██▉██▊▏  |
+| 34.32 | ██▉██▉██▉█▎ |
+| 32.94 | ██▉██▉██▉▉  |
+| 32.79 | ██▉██▉██▉▊  |
+#+TBLFM: $2='(orgtbl-ascii-plot-with-vert $1 0 40 12 3 6 9)
+
+vertical lines set at  0     3     6     9    12
+corresponding to       0.00 10.00 20.00 30.00 40.00
+
+* negative
+
+| -721 | █▏ ▏   ▏    | ◦      ▏     | ▊ ▏ ▏ ▏ ▏ ▏ ▏ |
+| -632 | █▉ ▏   ▏    | ▊      ▏     | █▋▏ ▏ ▏ ▏ ▏ ▏ |
+| -578 | ██▍▏   ▏    | █▍     ▏     | █▉▏ ▏ ▏ ▏ ▏ ▏ |
+| -491 | ██▉▏   ▏    | ██▏    ▏     | █▉█ ▏ ▏ ▏ ▏ ▏ |
+| -466 | ██▉▎   ▏    | ██▍    ▏     | █▉█▎▏ ▏ ▏ ▏ ▏ |
+| -445 | ██▉▍   ▏    | ██▋    ▏     | █▉█▌▏ ▏ ▏ ▏ ▏ |
+| -432 | ██▉▌   ▏    | ██▊    ▏     | █▉█▋▏ ▏ ▏ ▏ ▏ |
+| -408 | ██▉▋   ▏    | ███    ▏     | █▉█▉▏ ▏ ▏ ▏ ▏ |
+| -331 | ██▉█▎  ▏    | ███▊   ▏     | █▉█▉▋ ▏ ▏ ▏ ▏ |
+| -307 | ██▉█▌  ▏    | ████   ▏     | █▉█▉▉ ▏ ▏ ▏ ▏ |
+| -240 | ██▉██  ▏    | ████▋  ▏     | █▉█▉█▌▏ ▏ ▏ ▏ |
+| -170 | ██▉██▋ ▏    | █████▎ ▏     | █▉█▉█▉▎ ▏ ▏ ▏ |
+| -118 | ██▉███ ▏    | █████▊ ▏     | █▉█▉█▉▊ ▏ ▏ ▏ |
+|  -61 | ██▉███▌▏    | ██████▍▏     | █▉█▉█▉█▍▏ ▏ ▏ |
+|  -54 | ██▉███▌▏    | ██████▍▏     | █▉█▉█▉█▍▏ ▏ ▏ |
+|  -13 | ██▉███▉▏    | ██████▊▏     | █▉█▉█▉█▊▏ ▏ ▏ |
+|   27 | ██▉███▉▏    | ██████▉▎     | █▉█▉█▉█▉▎ ▏ ▏ |
+|  123 | ██▉███▉▉    | ██████▉█▏    | █▉█▉█▉█▉█▏▏ ▏ |
+|  180 | ██▉███▉█▍   | ██████▉█▋    | █▉█▉█▉█▉█▊▏ ▏ |
+|  198 | ██▉███▉█▌   | ██████▉█▉    | █▉█▉█▉█▉█▉▏ ▏ |
+|  198 | ██▉███▉█▌   | ██████▉█▉    | █▉█▉█▉█▉█▉▏ ▏ |
+|  254 | ██▉███▉██   | ██████▉██▍   | █▉█▉█▉█▉█▉▌ ▏ |
+|  262 | ██▉███▉██   | ██████▉██▌   | █▉█▉█▉█▉█▉▌ ▏ |
+|  361 | ██▉███▉██▉  | ██████▉███▌  | █▉█▉█▉█▉█▉█▌▏ |
+|  449 | ██▉███▉███▌ | ██████▉████▎ | █▉█▉█▉█▉█▉█▉▍ |
+|  478 | ██▉███▉███▊ | ██████▉████▋ | █▉█▉█▉█▉█▉█▉▊ |
+#+TBLFM: $2='(orgtbl-ascii-plot-with-vert $1 -875.0 625.0 12 3 7)::$3='(orgtbl-ascii-plot-with-vert $1 -721 515 12 7)::$4='(orgtbl-ascii-plot-with-vert $1 -800 600 14  2 4 6 8 10 12)
+
+* non numeric cases
+
+|         66.4 | ███▏  ▏      |
+|         82.6 | █████▉███▏   |
+|           89 | █████▉█████▋ |
+|           90 | █████▉██████ |
+|           91 | █████▉█████→ |
+|     no value | no val▏e     |
+|              | ◦     ▏      |
+|            0 | ←     ▏      |
+|           56 | ←     ▏      |
+|           58 | ◦     ▏      |
+|           60 | ▊     ▏      |
+| ()()()()()() | ()()()▏)()() |
+|         1000 | █████▉█████→ |
+|        -1000 | ←     ▏      |
+|         1e20 | █████▉█████→ |
+|        1e-20 | ←     ▏      |
+|        -1e20 | ←     ▏      |
+|       -1e-20 | ←     ▏      |
+|      1e-9999 | ←     ▏      |
+|       1e9999 | █████▉█████→ |
+|     -1e-9999 | ←     ▏      |
+|      -1e9999 | ←     ▏      |
+|            a | a     ▏      |
+|           aa | aa    ▏      |
+|          aaa | aaa   ▏      |
+|         aaaa | aaaa  ▏      |
+|        aaaaa | aaaaa ▏      |
+|       aaaaaa | aaaaaa▏      |
+|      aaaaaaa | aaaaaa▏      |
+|     aaaaaaaa | aaaaaa▏a     |
+|    aaaaaaaaa | aaaaaa▏aa    |
+|   aaaaaaaaaa | aaaaaa▏aaa   |
+|  aaaaaaaaaaa | aaaaaa▏aaaa  |
+| aaaaaaaaaaaa | aaaaaa▏aaaaa |
+#+TBLFM: $2='(orgtbl-ascii-plot-with-vert (or $1 "") 58.0 90.0 12 6)

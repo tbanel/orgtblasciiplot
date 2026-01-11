@@ -1,0 +1,172 @@
+# -*- coding:utf-8; -*-
+#+TITLE: Unit Tests & Examples for Orgtbl ASCII Draw
+Copyright (C) 2013-2026  Thierry Banel
+
+org-aggregate is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+org-aggregate is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+* How to run?
+Running all tests should not change anything to this page.
+
+Run this script to complete all the unit tests in a disposable
+buffer. When done, the buffer and the original, untouched
+~unitapitests.org~, are compared, stopping at the first difference.
+
+#+begin_src elisp :results none
+(defvar formula)
+
+(defun helper-plot (type xmin xmax ymax)
+  (setq formula
+        (condition-case err
+            (cond
+             ((eq type :a)
+              (orgtbl-ascii-plot--wizard-legacy 'orgtbl-ascii-draw 2 xmin xmax ymax))
+             ((eq type :c)
+              (orgtbl-ascii-plot--wizard-legacy 'orgtbl-uc-draw-cont 2 xmin xmax ymax))
+             ((eq type :g)
+              (orgtbl-ascii-plot--wizard-legacy 'orgtbl-uc-draw-grid 2 xmin xmax ymax))
+             ((eq type :1)
+              (orgtbl-ascii-plot--wizard-1-vertical 2 xmin xmax ymax))
+             ((eq type :2)
+              (orgtbl-ascii-plot--wizard-2-verticals 2 xmin xmax ymax))
+             ((eq type :n)
+              (orgtbl-ascii-plot--wizard-many-verticals 2 xmin xmax ymax))
+             (t (error "type %S unknown" type)))
+          (arith-error "division by zero")
+          (t (format "error %s" err)))))
+
+(defun run-api-test (type xmin xmax ymax commands)
+  (let (formula)
+    (execute-kbd-macro
+     (kbd
+      (format
+       "M-: (helper-plot SPC %s SPC %s SPC %s SPC %s) <return> %s"
+       type xmin xmax ymax commands)))
+    formula))
+
+(delete-other-windows)
+(goto-char (point-min))
+(org-cycle '(64))
+(split-window-right)
+
+;; Make a new buffer and fill it with the content of unitapitests.org
+
+(let ((f (buffer-file-name)))
+  (switch-to-buffer "disposable-unitapitest.org")
+  (erase-buffer)
+  (insert-file f))
+
+(org-mode)
+(org-cycle '(64))
+
+;; Clean
+(goto-char (point-min))
+(replace-regexp
+ (rx bol
+     "#+RESULTS:\n"
+     (* ": " (* any) "\n")
+     "\n")
+ "")
+
+;; recompute all tests
+(goto-char (point-min))
+(search-forward-regexp (rx bol (* space) "#+end_src"))
+(while
+    (search-forward "#+begin_src elisp" (point-max) t)
+  (org-babel-execute-src-block))
+
+;; Compare the disposable buffer with the reference unittests.org
+(goto-char (point-min))
+(compare-windows nil)
+
+#+end_src
+
+* 2 vertical grid lines
+
+#+begin_src elisp
+(run-api-test :2 97 135 12 "<return> <return> 110 <return> 120")
+#+end_src
+
+#+RESULTS:
+: '(orgtbl-ascii-plot-with-vert (or $2 "") 85.0 145.0 12 5 7)
+
+#+begin_src elisp
+(run-api-test :2 89.3 142.0 12 "<return> <return> 110 <return> 120")
+#+end_src
+
+#+RESULTS:
+: '(orgtbl-ascii-plot-with-vert (or $2 "") 60.0 180.0 12 5 6)
+
+#+begin_src elisp
+(run-api-test :2 52.1 178.8 12 "<return> <return> 110 <return> 120")
+#+end_src
+
+#+RESULTS:
+: error (user-error The two vertical lines would merge on a single character.
+: Either the two vertical lines are too close at 110.0 & 120.0,
+: or the min-max interval [52.1..178.8] is too large)
+
+* 1 vertical grid line
+
+#+begin_src elisp
+(run-api-test :1 21.1 87.3 12 "<return> <return> 45 <return>")
+#+end_src
+
+#+RESULTS:
+: '(orgtbl-ascii-plot-with-vert (or $2 "") 21.1 92.79999999999998 12 4)
+
+#+begin_src elisp
+(run-api-test :1 21.1 87.3 12 "<down> <return> <return> 50 <return>")
+#+end_src
+
+#+RESULTS:
+: '(orgtbl-ascii-plot-with-vert (or $2 "") 20.0 92.0 12 5)
+
+* n vertical grid lines
+
+#+begin_src elisp
+(run-api-test :n 21.1 58.31 33 "15 <return> <return> 10 <return>")
+#+end_src
+
+#+RESULTS:
+: '(orgtbl-ascii-plot-with-vert (or $2 "") 10.0 60.0 35  7 14 21 28)
+
+#+begin_src elisp
+(run-api-test :n 94 123 12 "<return> <return> 2.0 <return>")
+#+end_src
+
+#+RESULTS:
+: '(orgtbl-ascii-plot-with-vert (or $2 "") 94.0 124.0 15  1 2 3 4 5 6 7 8 9 10 11 12 13 14)
+
+#+begin_src elisp
+(run-api-test :n -34.2 10.1 12 "<return> <return> 5 <return>")
+#+end_src
+
+#+RESULTS:
+: '(orgtbl-ascii-plot-with-vert (or $2 "") -35.0 15.0 10  1 2 3 4 5 6 7 8 9)
+
+* legacy
+
+#+begin_src elisp
+(run-api-test :a 17.5 88.3 16 "<return> <return>")
+#+end_src
+
+#+RESULTS:
+: '(orgtbl-ascii-draw (or $2 "") 17.5 88.3 16)
+
+#+begin_src elisp
+(run-api-test :a -71.5 -8.83 12 "<return> <return>")
+#+end_src
+
+#+RESULTS:
+: '(orgtbl-ascii-draw (or $2 "") -71.5 -8.83 12)
