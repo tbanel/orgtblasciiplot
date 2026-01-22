@@ -27,6 +27,7 @@ Org Mode bar plots using UNICODE characters
 * Unicode constraint::
 * Fonts::
 * Robustness::
+* Display grid coordinates::
 * Installation::
 * Authors, contributors: Authors contributors.
 * Changes::
@@ -58,6 +59,13 @@ Unicode box‑drawing bar-plots right into Org Mode tables.
      break your plots (see *note Robustness::),
    • much care has been taken on fine details.
 
+   Small changes:
+   • ability to display the coordinates of the vertical grids (see *note
+     Display grid coordinates::),
+   • empty data cells and cells containing the minimum value used to be
+     plotted as ‘◦’ (a small zero); they are now rendered as ‘▏’ (a
+     vertical grid) (see *note Robustness::).
+
 
 File: orgtbl-ascii-plot.info,  Node: Gallery,  Next: First example,  Prev: New,  Up: Top
 
@@ -65,7 +73,6 @@ File: orgtbl-ascii-plot.info,  Node: Gallery,  Next: First example,  Prev: New, 
 *********
 
 Textual bar-plots right inside an Org Mode table:
-
 
 
 
@@ -81,9 +88,9 @@ Textual bar-plots right inside an Org Mode table:
      |  16 | WH           | █▉    ▏      | █▉ ▏  ▏  ▏   |
      |   9 | W.           | █     ▏      | █  ▏  ▏  ▏   |
      |   4 | !            | ▍     ▏      | ▍  ▏  ▏  ▏   |
-     |   1 | .            | ◦     ▏      | ◦  ▏  ▏  ▏   |
-     |   0 |              | ◦     ▏      | ◦  ▏  ▏  ▏   |
-     |   1 | .            | ◦     ▏      | ◦  ▏  ▏  ▏   |
+     |   1 | .            | ▏     ▏      | ▏  ▏  ▏  ▏   |
+     |   0 |              | ▏     ▏      | ▏  ▏  ▏  ▏   |
+     |   1 | .            | ▏     ▏      | ▏  ▏  ▏  ▏   |
      |   4 | !            | ▍     ▏      | ▍  ▏  ▏  ▏   |
      |   9 | W.           | █     ▏      | █  ▏  ▏  ▏   |
      |  16 | WH           | █▉    ▏      | █▉ ▏  ▏  ▏   |
@@ -97,7 +104,6 @@ Textual bar-plots right inside an Org Mode table:
                             ▲  ┗━━━━━━━━━━━━━━━━━━━━━━━━▲━━━━━━━━━━━━━━━━━━━━━━━━━┛
      fourth column╶─────────╯                           │
      is a usual Org Mode spreadsheet formula╶───────────╯
-
 
    Several distinct plots in the same table:
 
@@ -279,9 +285,9 @@ anywhere where a mono-spaced font is available.
    The 2nd and 3th, ‘0-vertical-unicode-xxxx-legacy’, are also legacy
 plotters.  They were not accessible through a key binding or a menu.
 Now they are.  They make use of UNICODE block characters, as the 4th,
-5th, and 6th.  Therefore, they need a character font able to display
-them (see *note Fonts::), and the file must be encoded in a variant of
-UNICODE, for instance UTF-8 or UTF-16.
+5th, and 6th styles.  Therefore, they need a character font able to
+display them (see *note Fonts::), and the file must be encoded in a
+variant of UNICODE, for instance UTF-8 or UTF-16.
 
    The ‘1-vertical’ style adds a vertical grid line at a specified
 coordinate.  It may slightly increase the maximum so as the grid line is
@@ -291,9 +297,9 @@ at the beginning of a character.
 It may adjust the specified minimum and maximum to get the 2 lines on
 the beginning of a character.
 
-   The ‘many-verticals’ style adds as may lines as needed so as there is
-a specified spacing between one line and the next.  The left border of
-the plot is considered to be the first vertical grid line.  The
+   The ‘many-verticals’ style adds as many lines as needed so as there
+is a specified spacing between one line and the next.  The left border
+of the plot is considered to be the first vertical grid line.  The
 specified minimum and maximum may be adjusted so that the grid lines
 fall on the beginning of characters.  It may also increase the specified
 width in characters.
@@ -310,7 +316,7 @@ function that ‘C-c " a’ used to call is still available unchanged.  Just
 answer ‘0-vertical-ascii-legacy’ (completion available) to the wizard
 when it asks for the style of plot.
 
-   The top-level wizard and the 6 sub-wizard can also be launched from
+   The top-level wizard and the 6 sub-wizards can also be launched from
 the menu.  Follow:
 
    ‘Menu > Table > Plot’
@@ -322,7 +328,7 @@ this package, they are.  Just select ‘0-vertical-unicode-cont-legacy’ or
 asks.
 
    3 new styles of plots are added by this package: 1, 2, and many
-vertical lines style plots.  Each has its own sub-wizard.
+vertical lines.  Each has its own sub-wizard.
 
 
 File: orgtbl-ascii-plot.info,  Node: Asking for minimum and maximum,  Next: Refreshing,  Prev: Key binding C-c " a and menu entries,  Up: Top
@@ -332,10 +338,16 @@ File: orgtbl-ascii-plot.info,  Node: Asking for minimum and maximum,  Next: Refr
 
 All sub-wizards ask for the minimum and maximum values to plot.  Just
 type ‘RET’ for the default value.  The defaults are the current minimum
-& maximum found in the table.  If you intend to add rows to the table
-later on, you may want to enlarge the ‘[min..max]’ interval beforehand.
-Thus the possibility to enter different values than the actual min &
-max.
+& maximum found in the table.
+
+   If you intend to add rows to the table later on, you may want to
+enlarge the ‘[min..max]’ interval beforehand.  This is why the wizard
+offers to enter different values than the actual min & max.
+
+   The wizard also offers to adjust the minimum and maximum to the
+closest human readable value.  For instance, when the actual minimum is
+‘23.45’, it suggests the value ‘20’.  To choose the suggested rounded
+value, type ‘<down>’ (this is the downward arrow key).
 
    If a value to plot falls outside the chosen ‘[min..max]’ interval, no
 worries.  It will be plotted anyway with a visual hint that it is out of
@@ -438,7 +450,7 @@ mono-spaced, they support those Unicodes, and they are open-source.
    ‘M-x customize-face default’
 
 
-File: orgtbl-ascii-plot.info,  Node: Robustness,  Next: Installation,  Prev: Fonts,  Up: Top
+File: orgtbl-ascii-plot.info,  Node: Robustness,  Next: Display grid coordinates,  Prev: Fonts,  Up: Top
 
 12 Robustness
 *************
@@ -448,7 +460,7 @@ nicely.  They won’t break the plot.
 
    • Non-numeric cells are just copied in the bar-plot, with vertical
      grid lines overwritten.
-   • Out-of-bound cells are those numeric values which fall outsided the
+   • Out-of-bound cells are those numeric values which fall outside the
      specified ‘[min..max]’ interval.  A visual arrow points in the
      direction where the actual value lies.  You may request a new plot
      with an enlarged ‘[min..max]’ interval.
@@ -456,17 +468,65 @@ nicely.  They won’t break the plot.
 
 
      | alphabet | al▏h▏b▏t | non numeric cell |
-     |          | ◦ ▏ ▏ ▏  | empty cell       |
+     |          | ▏ ▏ ▏ ▏  | empty cell       |
      |      500 | █▉█▉█▉█→ | too large value  |
      |     -500 | ← ▏ ▏ ▏  | too small value  |
 
 
-File: orgtbl-ascii-plot.info,  Node: Installation,  Next: Authors contributors,  Prev: Robustness,  Up: Top
+File: orgtbl-ascii-plot.info,  Node: Display grid coordinates,  Next: Installation,  Prev: Robustness,  Up: Top
 
-13 Installation
+13 Display grid coordinates
+***************************
+
+What are the coordinates of the vertical grids?
+
+   Looking at this spreadsheet formula tells us that there are vertical
+grids at coordinates 3, 6, 9:
+
+     '(orgtbl-ascii-plot-with-vert $1 0.0 100.0 12 ╷3 6 9)
+                                                   ╰──△──╯
+     character coordinates ╶──────────────────────────╯
+
+   Fine, but those are character coordinates.  We are interested in
+coordinates relative to our data.
+
+   To translate character coordinates to data coordinates,
+   • add a temporary row in your table with ‘S-M-<down>’,
+   • type ‘?’ (a question mark) in the data column,
+   • refresh the row with ‘C-c *’,
+   • look at the plotted column.
+
+   You should see something like the first row in this example:
+
+
+
+
+                         ╭────────────────────────────────────────╮
+               ╭─────────├────────────────────────╮               │
+               │    ╭────┼────╮     ╭─────────────├─────╮         │
+               ▼    ▼    ▼    ▼     ▼             │     │         │
+     |   ? | (0.0 25.0 50.0 75.0 100.0) |         │     │         │
+     |  36 | ██▉█▎ ▏  ▏                 |         │     │         │
+     |  49 | ██▉██▉▏  ▏                 |         ▲     ▲         ▲
+     |  64 | ██▉██▉█▋ ▏                 |         │     │         │
+     |  81 | ██▉██▉██▉▋                 |         │     │       ╭─┼─╮
+     | 100 | ██▉██▉██▉███               |         ╵     ╵       ╵ ╵ ╵
+     #+TBLFM: $2='(orgtbl-ascii-plot-with-vert $1 0.0 100.0 12  3 6 9)
+
+
+   It translates the character-coordinates to data-coordinates.  The
+minimum & maximum you specified appear as the first & last coordinates.
+
+   When done,
+   • remove the temporary row with ‘S-M-<up>’ (if you want).
+
+
+File: orgtbl-ascii-plot.info,  Node: Installation,  Next: Authors contributors,  Prev: Display grid coordinates,  Up: Top
+
+14 Installation
 ***************
 
-If you grap the package from Melpa, add the following lines to your
+If you catch the package from Melpa, add the following lines to your
 ‘.emacs’ file, and reload it.
 
      (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
@@ -498,7 +558,7 @@ widely accepted ‘use-package’ facility.  Put that in your ‘.emacs’ file:
 
 File: orgtbl-ascii-plot.info,  Node: Authors contributors,  Next: Changes,  Prev: Installation,  Up: Top
 
-14 Authors, contributors
+15 Authors, contributors
 ************************
 
 Author
@@ -507,7 +567,7 @@ Author
 
 File: orgtbl-ascii-plot.info,  Node: Changes,  Next: GPL 3 License,  Prev: Authors contributors,  Up: Top
 
-15 Changes
+16 Changes
 **********
 
 Top: earliest change.  Bottom: latest change.
@@ -519,11 +579,12 @@ Top: earliest change.  Bottom: latest change.
    • Unit tests.
    • Readme changed from Markdown to Org Mode.
    • Info file added.
+   • Ability to display vertical grid coordinates.
 
 
 File: orgtbl-ascii-plot.info,  Node: GPL 3 License,  Prev: Changes,  Up: Top
 
-16 GPL 3 License
+17 GPL 3 License
 ****************
 
 Copyright (C) 2013-2026 Thierry Banel
@@ -545,22 +606,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Tag Table:
 Node: Top95
-Node: New588
-Node: Gallery1620
-Node: First example6275
-Node: How does that work?8038
-Node: Another example9219
-Node: Wizard10925
-Node: Key binding C-c " a and menu entries12800
-Node: Asking for minimum and maximum13915
-Node: Refreshing14678
-Node: Unicode constraint15185
-Node: Fonts17058
-Node: Robustness17788
-Node: Installation18664
-Node: Authors contributors19783
-Node: Changes20000
-Node: GPL 3 License20488
+Node: New617
+Node: Gallery1977
+Node: First example6630
+Node: How does that work?8393
+Node: Another example9574
+Node: Wizard11280
+Node: Key binding C-c " a and menu entries13163
+Node: Asking for minimum and maximum14267
+Node: Refreshing15320
+Node: Unicode constraint15827
+Node: Fonts17700
+Node: Robustness18430
+Node: Display grid coordinates19317
+Node: Installation21729
+Node: Authors contributors22863
+Node: Changes23080
+Node: GPL 3 License23621
 
 End Tag Table
 

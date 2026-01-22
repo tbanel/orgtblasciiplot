@@ -23,6 +23,13 @@ The new bar-plots make sense of your data (see [[#gallery][Gallery]]):
   break your plots (see [[#robustness][Robustness]]),
 - much care has been taken on fine details.
 
+Small changes:
+- ability to display the coordinates of the vertical grids (see
+  [[#display-grid-coordinates][Display grid coordinates]]),
+- empty data cells and cells containing the minimum value used to be
+  plotted as =◦= (a small zero); they are now rendered as =▏= (a vertical
+  grid) (see [[#robustness][Robustness]]).
+
 * Table of Contents
 :PROPERTIES:
 :TOC:      :include siblings :depth 2 :force () :ignore (this) :local (nothing)
@@ -41,6 +48,7 @@ The new bar-plots make sense of your data (see [[#gallery][Gallery]]):
 - [[#unicode-constraint][Unicode constraint]]
 - [[#fonts][Fonts]]
 - [[#robustness][Robustness]]
+- [[#display-grid-coordinates][Display grid coordinates]]
 - [[#installation][Installation]]
 - [[#authors-contributors][Authors, contributors]]
 - [[#changes][Changes]]
@@ -57,7 +65,6 @@ Textual bar-plots right inside an Org Mode table:
 [[file:images/gallery_a.png]]
 
 #+begin_example
-
 Unicode with vertical lines at x=25, x=50, x=75╶─╮
 Unicode with one vertical line at x=50╶─╮  ╭─────╯
 legacy ASCII Org Mode plotter╶─╮        │  │
@@ -70,9 +77,9 @@ data to plot╶─╮      ╭─────────╯        │  │
 |  16 | WH           | █▉    ▏      | █▉ ▏  ▏  ▏   |
 |   9 | W.           | █     ▏      | █  ▏  ▏  ▏   |
 |   4 | !            | ▍     ▏      | ▍  ▏  ▏  ▏   |
-|   1 | .            | ◦     ▏      | ◦  ▏  ▏  ▏   |
-|   0 |              | ◦     ▏      | ◦  ▏  ▏  ▏   |
-|   1 | .            | ◦     ▏      | ◦  ▏  ▏  ▏   |
+|   1 | .            | ▏     ▏      | ▏  ▏  ▏  ▏   |
+|   0 |              | ▏     ▏      | ▏  ▏  ▏  ▏   |
+|   1 | .            | ▏     ▏      | ▏  ▏  ▏  ▏   |
 |   4 | !            | ▍     ▏      | ▍  ▏  ▏  ▏   |
 |   9 | W.           | █     ▏      | █  ▏  ▏  ▏   |
 |  16 | WH           | █▉    ▏      | █▉ ▏  ▏  ▏   |
@@ -86,7 +93,6 @@ data to plot╶─╮      ╭─────────╯        │  │
                        ▲  ┗━━━━━━━━━━━━━━━━━━━━━━━━▲━━━━━━━━━━━━━━━━━━━━━━━━━┛
 fourth column╶─────────╯                           │
 is a usual Org Mode spreadsheet formula╶───────────╯
-
 #+end_example
 
 Several distinct plots in the same table:
@@ -227,7 +233,7 @@ with =C-c " a=, while the cursor is inside the column to plot.
 | 12.10 | ██▉██▉█▎ ▏  |
 | 15.72 | ██▉██▉██▉▍  |
 | 17.26 | ██▉██▉██▉█▎ |
-,#+TBLFM: $2='(orgtbl-ascii-plot-with-vert $1 0.0 20.0 12  3 6 9)
+#+TBLFM: $2='(orgtbl-ascii-plot-with-vert $1 0.0 20.0 12  3 6 9)
 #+end_example
 
 Here we requested vertical lines 5 units apart from each other (the
@@ -272,9 +278,9 @@ anywhere where a mono-spaced font is available.
 The 2nd and 3th, =0-vertical-unicode-xxxx-legacy=, are also legacy
 plotters. They were not accessible through a key binding or a
 menu. Now they are. They make use of UNICODE block characters, as the
-4th, 5th, and 6th. Therefore, they need a character font able to
-display them (see [[#fonts][Fonts]]), and the file must be encoded in a variant of
-UNICODE, for instance UTF-8 or UTF-16.
+4th, 5th, and 6th styles. Therefore, they need a character font able
+to display them (see [[#fonts][Fonts]]), and the file must be encoded in a variant
+of UNICODE, for instance UTF-8 or UTF-16.
 
 The =1-vertical= style adds a vertical grid line at a specified
 coordinate. It may slightly increase the maximum so as the grid line
@@ -284,7 +290,7 @@ The =2-verticals= style is like the =1-vertical= with 2 grid lines. It may
 adjust the specified minimum and maximum to get the 2 lines on the
 beginning of a character.
 
-The =many-verticals= style adds as may lines as needed so as there is a
+The =many-verticals= style adds as many lines as needed so as there is a
 specified spacing between one line and the next. The left border of
 the plot is considered to be the first vertical grid line. The
 specified minimum and maximum may be adjusted so that the grid lines
@@ -302,7 +308,7 @@ function that =C-c " a= used to call is still available unchanged. Just
 answer =0-vertical-ascii-legacy= (completion available) to the wizard
 when it asks for the style of plot.
 
-The top-level wizard and the 6 sub-wizard can also be launched from
+The top-level wizard and the 6 sub-wizards can also be launched from
 the menu. Follow:
 
 =Menu > Table > Plot=
@@ -314,7 +320,7 @@ package, they are. Just select =0-vertical-unicode-cont-legacy= or
 asks.
 
 3 new styles of plots are added by this package: 1, 2, and many
-vertical lines style plots. Each has its own sub-wizard.
+vertical lines. Each has its own sub-wizard.
 
 * Asking for minimum and maximum
 :PROPERTIES:
@@ -323,10 +329,17 @@ vertical lines style plots. Each has its own sub-wizard.
 
 All sub-wizards ask for the minimum and maximum values to plot. Just
 type =RET= for the default value. The defaults are the current minimum &
-maximum found in the table. If you intend to add rows to the table
+maximum found in the table.
+
+If you intend to add rows to the table
 later on, you may want to enlarge the =[min..max]= interval
-beforehand. Thus the possibility to enter different values than the
-actual min & max.
+beforehand. This is why the wizard offers to enter different values
+than the actual min & max.
+
+The wizard also offers to adjust the minimum and maximum to the
+closest human readable value. For instance, when the actual minimum is
+=23.45=, it suggests the value =20=. To choose the suggested rounded
+value, type =<down>= (this is the downward arrow key).
 
 If a value to plot falls outside the chosen =[min..max]= interval, no
 worries. It will be plotted anyway with a visual hint that it is out
@@ -438,7 +451,7 @@ nicely. They won't break the plot.
 
 - Non-numeric cells are just copied in the bar-plot, with vertical
   grid lines overwritten.
-- Out-of-bound cells are those numeric values which fall outsided the
+- Out-of-bound cells are those numeric values which fall outside the
   specified =[min..max]= interval. A visual arrow points in the
   direction where the actual value lies. You may request a new plot
   with an enlarged =[min..max]= interval.
@@ -447,17 +460,68 @@ nicely. They won't break the plot.
 
 #+begin_example
    | alphabet | al▏h▏b▏t | non numeric cell |
-   |          | ◦ ▏ ▏ ▏  | empty cell       |
+   |          | ▏ ▏ ▏ ▏  | empty cell       |
    |      500 | █▉█▉█▉█→ | too large value  |
    |     -500 | ← ▏ ▏ ▏  | too small value  |
 #+end_example
+
+* Display grid coordinates
+:PROPERTIES:
+:CUSTOM_ID: display-grid-coordinates
+:END:
+What are the coordinates of the vertical grids?
+
+Looking at this spreadsheet formula tells us that there are vertical
+grids at coordinates 3, 6, 9:
+
+#+begin_example
+'(orgtbl-ascii-plot-with-vert $1 0.0 100.0 12 ╷3 6 9)
+                                              ╰──△──╯
+character coordinates ╶──────────────────────────╯
+#+end_example
+
+Fine, but those are character coordinates. We are interested in
+coordinates relative to our data.
+
+To translate character coordinates to data coordinates,
+- add a temporary row in your table with =S-M-<down>=,
+- type =?= (a question mark) in the data column,
+- refresh the row with =C-c *=,
+- look at the plotted column.
+
+You should see something like the first row in this example:
+
+[[file:images/display-coordinates.png]]
+
+#+begin_example
+
+                    ╭────────────────────────────────────────╮
+          ╭─────────├────────────────────────╮               │
+          │    ╭────┼────╮     ╭─────────────├─────╮         │
+          ▼    ▼    ▼    ▼     ▼             │     │         │
+|   ? | (0.0 25.0 50.0 75.0 100.0) |         │     │         │
+|  36 | ██▉█▎ ▏  ▏                 |         │     │         │
+|  49 | ██▉██▉▏  ▏                 |         ▲     ▲         ▲
+|  64 | ██▉██▉█▋ ▏                 |         │     │         │
+|  81 | ██▉██▉██▉▋                 |         │     │       ╭─┼─╮
+| 100 | ██▉██▉██▉███               |         ╵     ╵       ╵ ╵ ╵
+#+TBLFM: $2='(orgtbl-ascii-plot-with-vert $1 0.0 100.0 12  3 6 9)
+
+#+end_example
+
+It translates the character-coordinates to data-coordinates. The
+minimum & maximum you specified appear as the first & last
+coordinates.
+
+When done,
+- remove the temporary row with =S-M-<up>= (if you want).
 
 * Installation
 :PROPERTIES:
 :CUSTOM_ID: installation
 :END:
 
-If you grap the package from Melpa, add the following lines to your
+If you catch the package from Melpa, add the following lines to your
 =.emacs= file, and reload it.
 
 #+begin_src elisp
@@ -517,6 +581,7 @@ Top: earliest change. Bottom: latest change.
 - Unit tests.
 - Readme changed from Markdown to Org Mode.
 - Info file added.
+- Ability to display vertical grid coordinates.
 
 * GPL 3 License
 :PROPERTIES:

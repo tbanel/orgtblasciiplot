@@ -375,69 +375,84 @@ TYPE may be
 ;; The other way around:
 ;;   x = xmin + y * (xmax-xmin) / ymax
 
+(defun orgtbl-ascii-plot-with-vert-coord (xmin xmax ymax ylin)
+  "Return the list of coordinates of the vertical grid.
+First and last coordinates are XMIN and XMAX.
+Intermediate coordinates are computed from YLIN, the list
+of characters coordinates."
+  (interactive)
+  (let ((result (list xmin)))
+    (cl-loop
+     for y in ylin
+     for x = (+ (* (/ (float y) ymax) (- xmax xmin)) xmin)
+     do (nconc result (list x)))
+    (nconc result (list xmax))
+    (format "%s" result)))
+
 ;;;###autoload
 (defun orgtbl-ascii-plot-with-vert (x xmin xmax ymax &rest ylin)
-  (let ((boxes " ▏▎▍▌▋▊▉█")
-        (result x))
-    (if (stringp xmin) (setq xmin (string-to-number xmin)))
-    (if (stringp xmax) (setq xmax (string-to-number xmax)))
-    (if (stringp ymax) (setq ymax (string-to-number ymax)))
-    (setq xmin (float xmin))
-    (setq xmax (float xmax))
-    (setq ymax (floor ymax))
-    (setq ylin
+  (if (equal x "?")
+      ;; "?" is a request for explanation
+      (orgtbl-ascii-plot-with-vert-coord xmin xmax ymax ylin)
+    (let ((boxes " ▏▎▍▌▋▊▉█")
+          (result x))
+      (if (stringp xmin) (setq xmin (string-to-number xmin)))
+      (if (stringp xmax) (setq xmax (string-to-number xmax)))
+      (if (stringp ymax) (setq ymax (string-to-number ymax)))
+      (setq xmin (float xmin))
+      (setq xmax (float xmax))
+      (setq ymax (floor ymax))
+      (setq ylin
+            (cl-loop
+             for y in ylin
+             collect (floor (if (stringp y) (string-to-number y) y))))
+      (cond
+
+       ;; 1st case: a numeric cell, x is numeric
+       ((setq x (orgtbl-ascii-plot--to-number x))
+        (setq x (float x))
+        (let* ((y (* (/ (- x xmin) (- xmax xmin)) ymax))
+               (fy (if (<= -9999 y 9999) (floor y) y))) ;; avoid arith overflow
+          (setq result (make-string ymax ?-))
+
+          ;; paint in black left of y, paint in white right of y
           (cl-loop
-           for y in ylin
-           collect (floor (if (stringp y) (string-to-number y) y))))
-    (cond
+           for i from 0 below ymax
+           do
+           (cond
+            ((equal fy i)
+             (aset result i (aref boxes (floor (* (- y i) 8)))))
+            ((< y i)
+             (aset result i (aref boxes 0)))
+            (t
+             (aset result i (aref boxes 8)))))
 
-     ;; 1st case: a numeric cell, x is numeric
-     ((setq x (orgtbl-ascii-plot--to-number x))
-      (setq x (float x))
-      (let* ((y (* (/ (- x xmin) (- xmax xmin)) ymax))
-             (fy (if (<= -9999 y 9999) (floor y) y))) ;; avoid arith overflow
-        (setq result (make-string ymax ?-))
+          ;; visually mark too small or too large values
+          (cond
+           ((< x xmin)
+            (aset result 0 ?←))
+           ((> x xmax)
+            (aset result (1- ymax) ?→)))))
 
-        ;; paint in black left of y, paint in white right of y
-        (cl-loop
-         for i from 0 below ymax
-         do
-         (cond
-          ((equal fy i)
-           (aset result i (aref boxes (floor (* (- y i) 8)))))
-          ((< y i)
-           (aset result i (aref boxes 0)))
-          (t
-           (aset result i (aref boxes 8)))))
+       ;; 2nd case: a non numeric cell copied to result
+       ((< (length result) ymax)
+        (setq result (string-pad result ymax))))
 
-        ;; visually mark too small or too large values
-        (cond
-         ((< x xmin)
-          (aset result 0 ?←))
-         ((> x xmax)
-          (aset result (1- ymax) ?→)))))
+      ;; get ride of a possible blank at the beginning which breaks alignment
+      (if (eq (aref result 0) ? )
+          (aset result 0 ?▏))
 
-     ;; 2nd case: a non numeric cell copied in result
-     ((< (length result) ymax)
-      (setq result (string-pad result ymax))))
+      ;; overwrite vertical lines
+      (cl-loop
+       for i in ylin
+       if (and (> i 0) (eq (aref result (1- i)) (aref boxes 8)))
+       do (aset result (1- i) (aref boxes 7))
+       ;; it happens that the unicodes ▏▎▍▌▋▊▉█ form a continuous range
+       ;; and as this is not going to change anytime soon, hardcoding is ok
+       unless (<= (aref boxes 8) (aref result i) (aref boxes 1))
+       do (aset result i (aref boxes 1)))
 
-    ;; get ride of a possible blank at the beginning which breaks alignment
-    (if (eq (aref result 0) ? )
-        (aset result 0 ?◦))
-
-    ;; overwrite vertical lines
-    (cl-loop
-     for i in ylin
-     do
-     (if (and (> i 0) (eq (aref result (1- i)) (aref boxes 8)))
-         (aset result (1- i) (aref boxes 7)))
-     (unless
-         ;; it happens that the unicodes ▏▎▍▌▋▊▉█ form a continuous range
-         ;; and as this is not going to change anytime soon, hardcoding is ok
-         (<= (aref boxes 8) (aref result i) (aref boxes 1))
-       (aset result i (aref boxes 1))))
-
-    result))
+      result)))
 
 ;;╭────────────────────────────╮
 ;;│ Keyboard and Menu Bindings │
