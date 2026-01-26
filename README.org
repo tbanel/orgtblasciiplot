@@ -28,7 +28,8 @@ Small changes:
   [[#display-grid-coordinates][Display grid coordinates]]),
 - empty data cells and cells containing the minimum value used to be
   plotted as =◦= (a small zero); they are now rendered as =▏= (a vertical
-  grid) (see [[#robustness][Robustness]]).
+  grid) (see [[#robustness][Robustness]]),
+- Org Mode formatted dates supported (see [[#dates][Dates]]).
 
 * Table of Contents
 :PROPERTIES:
@@ -44,6 +45,7 @@ Small changes:
 - [[#wizard][Wizard]]
 - [[#key-binding-c-c--a-and-menu-entries][Key binding C-c " a and menu entries]]
 - [[#asking-for-minimum-and-maximum][Asking for minimum and maximum]]
+- [[#dates][Dates]]
 - [[#refreshing][Refreshing]]
 - [[#unicode-constraint][Unicode constraint]]
 - [[#fonts][Fonts]]
@@ -345,6 +347,38 @@ If a value to plot falls outside the chosen =[min..max]= interval, no
 worries. It will be plotted anyway with a visual hint that it is out
 of bounds. See [[#robustness][Robustness]].
 
+* Dates
+:PROPERTIES:
+:CUSTOM_ID: dates
+:END:
+
+Org Mode dates are supported in data columns.
+
+Each date is first converted to the number of seconds since
+=[1970-01-01]=.
+
+This is the convention followed by Org Mode (see
+=org-time-string-to-seconds= for reference). Note that there might be an
+offset if the daylight saving time is set.
+
+Example:
+
+[[file:images/dates.png]]
+
+#+begin_example
+| [2028-04-27 12:02] | ▏     ▏      |
+| [2028-09-08 02:43] | █▎    ▏      |
+| [2029-01-20 09:43] | ██▋   ▏      |
+| [2029-05-31 16:55] | ███▉  ▏      |
+| [2029-12-11 10:22] | █████▉▏      |
+| [2030-03-29 07:07] | █████▉▉      |
+| [2030-06-24 21:54] | █████▉█▊     |
+| [2030-12-21 17:39] | █████▉███▋   |
+| [2031-04-14 09:51] | █████▉████▊  |
+| [2031-07-31 05:05] | █████▉█████▊ |
+#+TBLFM: $2='(orgtbl-ascii-plot-with-vert (or $1 "") 1840442520.0 1944607380.0 12 6)
+#+end_example
+
 * Refreshing
 :PROPERTIES:
 :CUSTOM_ID: refreshing
@@ -582,6 +616,7 @@ Top: earliest change. Bottom: latest change.
 - Readme changed from Markdown to Org Mode.
 - Info file added.
 - Ability to display vertical grid coordinates.
+- Org Mode time-stamps supported.
 
 * GPL 3 License
 :PROPERTIES:

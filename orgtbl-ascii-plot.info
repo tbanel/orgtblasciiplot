@@ -23,6 +23,7 @@ Org Mode bar plots using UNICODE characters
 * Wizard::
 * Key binding C-c " a and menu entries::
 * Asking for minimum and maximum::
+* Dates::
 * Refreshing::
 * Unicode constraint::
 * Fonts::
@@ -64,7 +65,8 @@ Unicode box‑drawing bar-plots right into Org Mode tables.
      Display grid coordinates::),
    • empty data cells and cells containing the minimum value used to be
      plotted as ‘◦’ (a small zero); they are now rendered as ‘▏’ (a
-     vertical grid) (see *note Robustness::).
+     vertical grid) (see *note Robustness::),
+   • Org Mode formatted dates supported (see *note Dates::).
 
 
 File: orgtbl-ascii-plot.info,  Node: Gallery,  Next: First example,  Prev: New,  Up: Top
@@ -331,7 +333,7 @@ asks.
 vertical lines.  Each has its own sub-wizard.
 
 
-File: orgtbl-ascii-plot.info,  Node: Asking for minimum and maximum,  Next: Refreshing,  Prev: Key binding C-c " a and menu entries,  Up: Top
+File: orgtbl-ascii-plot.info,  Node: Asking for minimum and maximum,  Next: Dates,  Prev: Key binding C-c " a and menu entries,  Up: Top
 
 8 Asking for minimum and maximum
 ********************************
@@ -354,10 +356,41 @@ worries.  It will be plotted anyway with a visual hint that it is out of
 bounds.  See *note Robustness::.
 
 
-File: orgtbl-ascii-plot.info,  Node: Refreshing,  Next: Unicode constraint,  Prev: Asking for minimum and maximum,  Up: Top
+File: orgtbl-ascii-plot.info,  Node: Dates,  Next: Refreshing,  Prev: Asking for minimum and maximum,  Up: Top
 
-9 Refreshing
-************
+9 Dates
+*******
+
+Org Mode dates are supported in data columns.
+
+   Each date is first converted to the number of seconds since
+‘[1970-01-01]’.
+
+   This is the convention followed by Org Mode (see
+‘org-time-string-to-seconds’ for reference).  Note that there might be
+an offset if the daylight saving time is set.
+
+   Example:
+
+
+
+     | [2028-04-27 12:02] | ▏     ▏      |
+     | [2028-09-08 02:43] | █▎    ▏      |
+     | [2029-01-20 09:43] | ██▋   ▏      |
+     | [2029-05-31 16:55] | ███▉  ▏      |
+     | [2029-12-11 10:22] | █████▉▏      |
+     | [2030-03-29 07:07] | █████▉▉      |
+     | [2030-06-24 21:54] | █████▉█▊     |
+     | [2030-12-21 17:39] | █████▉███▋   |
+     | [2031-04-14 09:51] | █████▉████▊  |
+     | [2031-07-31 05:05] | █████▉█████▊ |
+     #+TBLFM: $2='(orgtbl-ascii-plot-with-vert (or $1 "") 1840442520.0 1944607380.0 12 6)
+
+
+File: orgtbl-ascii-plot.info,  Node: Refreshing,  Next: Unicode constraint,  Prev: Dates,  Up: Top
+
+10 Refreshing
+*************
 
 In case the table evolves, there is no need to run again the wizard.
 Just type:
@@ -377,7 +410,7 @@ plot with ‘M-S-<left>’, and re-create it.
 
 File: orgtbl-ascii-plot.info,  Node: Unicode constraint,  Next: Fonts,  Prev: Refreshing,  Up: Top
 
-10 Unicode constraint
+11 Unicode constraint
 *********************
 
 Unicode imposes a constraint: the vertical grid lines are only drawable
@@ -421,7 +454,7 @@ then chances are that your Org Mode file will be correctly encoded.
 
 File: orgtbl-ascii-plot.info,  Node: Fonts,  Next: Robustness,  Prev: Unicode constraint,  Up: Top
 
-11 Fonts
+12 Fonts
 ********
 
 Not all fonts can display the needed Unicode characters:
@@ -452,7 +485,7 @@ mono-spaced, they support those Unicodes, and they are open-source.
 
 File: orgtbl-ascii-plot.info,  Node: Robustness,  Next: Display grid coordinates,  Prev: Fonts,  Up: Top
 
-12 Robustness
+13 Robustness
 *************
 
 Non-numeric and out-of-bound cells in your input data are handled
@@ -475,7 +508,7 @@ nicely.  They won’t break the plot.
 
 File: orgtbl-ascii-plot.info,  Node: Display grid coordinates,  Next: Installation,  Prev: Robustness,  Up: Top
 
-13 Display grid coordinates
+14 Display grid coordinates
 ***************************
 
 What are the coordinates of the vertical grids?
@@ -523,7 +556,7 @@ minimum & maximum you specified appear as the first & last coordinates.
 
 File: orgtbl-ascii-plot.info,  Node: Installation,  Next: Authors contributors,  Prev: Display grid coordinates,  Up: Top
 
-14 Installation
+15 Installation
 ***************
 
 If you catch the package from Melpa, add the following lines to your
@@ -558,7 +591,7 @@ widely accepted ‘use-package’ facility.  Put that in your ‘.emacs’ file:
 
 File: orgtbl-ascii-plot.info,  Node: Authors contributors,  Next: Changes,  Prev: Installation,  Up: Top
 
-15 Authors, contributors
+16 Authors, contributors
 ************************
 
 Author
@@ -567,7 +600,7 @@ Author
 
 File: orgtbl-ascii-plot.info,  Node: Changes,  Next: GPL 3 License,  Prev: Authors contributors,  Up: Top
 
-16 Changes
+17 Changes
 **********
 
 Top: earliest change.  Bottom: latest change.
@@ -580,11 +613,12 @@ Top: earliest change.  Bottom: latest change.
    • Readme changed from Markdown to Org Mode.
    • Info file added.
    • Ability to display vertical grid coordinates.
+   • Org Mode time-stamps supported.
 
 
 File: orgtbl-ascii-plot.info,  Node: GPL 3 License,  Prev: Changes,  Up: Top
 
-17 GPL 3 License
+18 GPL 3 License
 ****************
 
 Copyright (C) 2013-2026 Thierry Banel
@@ -606,23 +640,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Tag Table:
 Node: Top95
-Node: New617
-Node: Gallery1977
-Node: First example6630
-Node: How does that work?8393
-Node: Another example9574
-Node: Wizard11280
-Node: Key binding C-c " a and menu entries13163
-Node: Asking for minimum and maximum14267
-Node: Refreshing15320
-Node: Unicode constraint15827
-Node: Fonts17700
-Node: Robustness18430
-Node: Display grid coordinates19317
-Node: Installation21729
-Node: Authors contributors22863
-Node: Changes23080
-Node: GPL 3 License23621
+Node: New627
+Node: Gallery2050
+Node: First example6703
+Node: How does that work?8466
+Node: Another example9647
+Node: Wizard11353
+Node: Key binding C-c " a and menu entries13236
+Node: Asking for minimum and maximum14340
+Node: Dates15388
+Node: Refreshing16533
+Node: Unicode constraint17017
+Node: Fonts18890
+Node: Robustness19620
+Node: Display grid coordinates20507
+Node: Installation22919
+Node: Authors contributors24053
+Node: Changes24270
+Node: GPL 3 License24850
 
 End Tag Table
 

@@ -199,6 +199,10 @@ Examples:
        eos)
       x))
     (string-to-number x))
+   ((and
+     (stringp x)
+     (string-match org-ts-regexp0 x))
+    (org-time-string-to-seconds x))
    (t nil)))
 
 ;;╭────────────────────╮
