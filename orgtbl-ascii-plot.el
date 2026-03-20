@@ -133,6 +133,7 @@ Examples:
   891.3 → 1000"
   (cond
    ((= x 0) (float x))
+   ((>= x 1e999) x)
    ((<= x 0)
     (- (orgtbl-ascii-plot--decimal-readable-round (- x))))
    (t
@@ -417,7 +418,7 @@ of characters coordinates."
         (setq x (float x))
         (let* ((y (* (/ (- x xmin) (- xmax xmin)) ymax))
                (fy (if (<= -9999 y 9999) (floor y) y))) ;; avoid arith overflow
-          (setq result (make-string ymax ?-))
+          (setq result (make-vector ymax ?-))
 
           ;; paint in black left of y, paint in white right of y
           (cl-loop
@@ -440,7 +441,11 @@ of characters coordinates."
 
        ;; 2nd case: a non numeric cell copied to result
        ((< (length result) ymax)
-        (setq result (string-pad result ymax))))
+        (setq result (vconcat (string-pad result ymax))))
+
+       ;; length of result is enough
+       (t
+        (setq result (vconcat result))))
 
       ;; get ride of a possible blank at the beginning which breaks alignment
       (if (eq (aref result 0) ? )
@@ -456,7 +461,7 @@ of characters coordinates."
        unless (<= (aref boxes 8) (aref result i) (aref boxes 1))
        do (aset result i (aref boxes 1)))
 
-      result)))
+      (concat result))))
 
 ;;╭────────────────────────────╮
 ;;│ Keyboard and Menu Bindings │
